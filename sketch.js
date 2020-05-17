@@ -1,13 +1,29 @@
-// ml5.js: Pose Estimation with PoseNet
-// The Coding Train / Daniel Shiffman
-// https://thecodingtrain.com/Courses/ml5-beginners-guide/7.1-posenet.html
-// https://youtu.be/OIo-DIOkNVg
-// https://editor.p5js.org/codingtrain/sketches/ULA97pJXR
-
 let video;
 let poseNet;
 let pose;
 let skeleton;
+
+
+
+var firebaseConfig = {
+  apiKey: "AIzaSyBd_A-fJYsRZRKn7AZXaOnMf8XMq134pTs",
+  authDomain: "poseestimationtherapy.firebaseapp.com",
+  databaseURL: "https://poseestimationtherapy.firebaseio.com",
+  projectId: "poseestimationtherapy",
+  storageBucket: "poseestimationtherapy.appspot.com",
+  messagingSenderId: "491980698977",
+  appId: "1:491980698977:web:8810b48ab4421379dbc120",
+  measurementId: "G-DSXCXXKDZK"
+};
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+
+function writeUserData(userId, pose) {
+  firebase.database().ref('users/' + userId).set(pose);
+}
+
+
 
 function setup() {
   createCanvas(640, 480);
@@ -20,10 +36,14 @@ function setup() {
 function gotPoses(poses) {
   //console.log(poses); 
   if (poses.length > 0) {
+    writeUserData("test", poses[0]);
     pose = poses[0].pose;
     skeleton = poses[0].skeleton;
   }
 }
+
+
+
 
 
 function modelLoaded() {
@@ -32,7 +52,7 @@ function modelLoaded() {
 
 function draw() {
   image(video, 0, 0);
-
+  
   if (pose) {
     let eyeR = pose.rightEye;
     let eyeL = pose.leftEye;
