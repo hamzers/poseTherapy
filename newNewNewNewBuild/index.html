@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<meta charset="utf-8">
+	<script src="p5.js"></script>
+	<script src="p5.sound.min.js"></script>
+	<script src="ml5.min.js"></script>
+	<script src="TemplateData/UnityProgress.js"></script>
+	<script src="Build/UnityLoader.js"></script>
+	<script>
+		var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Desktop.json", { onProgress: UnityProgress });
+
+		var testObject = { name: "John", age: 20 };
+		var jsonString = JSON.stringify(testObject);
+	</script>
+
+
+</head>
+<body>
+
+
+
+
+
+	<button onclick="setTimeout(calibratePose, 7000)">Calibrate Pose 9 FT AWAY</button>
+	<button onclick="setTimeout(calibratePose2, 7000)">Calibrate Pose 2 6 FT AWAY</button>
+	<button onclick="setTimeout(calibratePose3, 7000)">Calibrate Pose 3 3 FT AWAY</button>
+	<button onclick="setTimeout(guessDistanceEQs, 7000)">Generate Z EQs</button>
+	<!--<button onclick="setTimeout(diffCalibrate, 7000)">Diff 4 feet</button>-->
+
+
+	<script src="numeric.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
+
+	<!-- TODO: Add SDKs for Firebase products that you want to use
+		  https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-database.js"></script>
+
+
+
+	<!--<script src="sketch.js"></script> -->
+
+	<script>
+		let video;
+		let poseNet;
+		let pose;
+		let skeleton;
+		var calibrate;
+		var calibrate2;
+		var calibrate3;
+		var diffCalibrate;
+		var zAEq;
+		var zBEq;
+		var zCEq;
+		var zDEq;
+		var enableZ = 0;
+		var coordinate = new Object();
+		var body = new Object();
+		var coreZ = 0.0;
+		var coord = [];
+			//< !--
+				//Formating of init length array
+				//Init lengths :[0a: RShoulder to LShoulder, 1b: RShoulder to RHip, 2c:RHip to LHip, 3d:LShoulder to LHip,
+				//4e: RUpperArm,5f: Rforearm, 6g:LUpperArm, 7h:RForearm, 8i:RThigh, 9j:RCalf, 10k:LThigh, 11L:LCalf]
+
+			//-->
+			var height;
+		var relativeLengths = [];
+
+		function distanceCalc(obj1, obj2) {
+			let distanceCalc = Math.pow((Math.pow(obj1.x - obj2.x, 2) + Math.pow(obj1.y - obj2.y, 2)), 0.5);
+			return distanceCalc;
+		}
+		var firebaseConfig = {
+			apiKey: "AIzaSyBd_A-fJYsRZRKn7AZXaOnMf8XMq134pTs",
+			authDomain: "poseestimationtherapy.firebaseapp.com",
+			databaseURL: "https://poseestimationtherapy.firebaseio.com",
+			projectId: "poseestimationtherapy",
+			storageBucket: "poseestimationtherapy.appspot.com",
+			messagingSenderId: "491980698977",
+			appId: "1:491980698977:web:8810b48ab4421379dbc120",
+			measurementId: "G-DSXCXXKDZK"
+		};
+		// Initialize Firebase
+		firebase.initializeApp(firebaseConfig);
+		var database = firebase.database();
+
+		function writeUserData(userId, pose) {
+
+			coord[0] = distanceCalc(pose.leftShoulder, pose.rightShoulder);
+			coord[1] = distanceCalc(pose.rightShoulder, pose.rightHip);
+			coord[2] = distanceCalc(pose.leftHip, pose.rightHip);
+			coord[3] = distanceCalc(pose.leftShoulder, pose.leftHip);
+			coord[4] = distanceCalc(pose.rightShoulder, pose.rightElbow);
+			coord[5] = distanceCalc(pose.rightElbow, pose.rightWrist);
+			coord[6] = distanceCalc(pose.leftShoulder, pose.leftElbow);
+			coord[7] = distanceCalc(pose.leftElbow, pose.leftWrist);
+			coord[8] = distanceCalc(pose.rightHip, pose.rightKnee);
+			coord[9] = distanceCalc(pose.rightKnee, pose.rightAnkle);
+			coord[10] = distanceCalc(pose.leftHip, pose.leftKnee);
+			coord[11] = distanceCalc(pose.leftKnee, pose.leftAnkle);
+			//standardize
+			let standard = (coord[1] + coord[3]) / 2
+			for (i = 0; i < 12; i++) {
+				coord[i] = coord[i] / (standard / 0.8);
+			}
+			//init coordinate
+
+			body.cZ = coreZ;
+			//get core coordinates (shoulders, hips)
+			body.leftShoulder = { "x": 0.0, "y": 0.0, "z": 0.0 };
+			body.rightShoulder = { "x": 0.0, "y": 0.0, "z": 0.0 };
+			body.leftHip = { "x": 0.0, "y": 0.0, "z": 0.0 };
+			body.rightHip = { "x": 0.0, "y": 0.0, "z": 0.0 };
+
+			//get arm coordinates
+			rshld = pose.rightShoulder;
+			relb = pose.rightElbow;
+			body.rightElbow = {
+				"x": body.rightShoulder.x + (relb.x - rshld.x) / standard,
+				"y": body.rightShoulder.y + (pose.rightElbow.y - pose.rightShoulder.y) / standard,
+				"z": body.rightShoulder.z + Math.pow(Math.abs(Math.pow(relativeLengths[4], 2) - Math.pow(coord[4], 2)), 0.5)
+			};
+			console.log(typeof (body.rightShoulder.z) + "||" + typeof (relativeLengths[4]) + "||" + typeof (coord[4]));
+			console.log(body.rightElbow.z);
+			body.rightWrist = {
+				"x": body.rightElbow.x + (pose.rightWrist.x - pose.rightElbow.x) / standard,
+				"y": body.rightElbow.y + (pose.rightWrist.y - pose.rightElbow.y) / standard,
+				"z": body.rightElbow.z + Math.pow(Math.abs(Math.pow(relativeLengths[5], 2) - Math.pow(coord[5], 2)), 0.5)
+			};
+			body.leftElbow = {
+				"x": body.leftShoulder.x + (pose.leftElbow.x - pose.leftShoulder.x) / standard,
+				"y": body.leftShoulder.y + (pose.leftElbow.y - pose.leftShoulder.y) / standard,
+				"z": body.leftShoulder.z + Math.pow(Math.abs(Math.pow(relativeLengths[6], 2) - Math.pow(coord[6], 2)), 0.5)
+			};
+
+			body.leftWrist = {
+				"x": body.leftElbow.x + (pose.leftWrist.x - pose.leftElbow.x) / standard,
+				"y": body.leftElbow.y + (pose.leftWrist.y - pose.leftElbow.y) / standard,
+				"z": body.leftElbow.z + Math.pow(Math.abs(Math.pow(relativeLengths[7], 2) - Math.pow(coord[7], 2)), 0.5)
+			};
+
+			//get leg coordinates
+
+
+			body.rightKnee = {
+				"x": body.rightHip.x + (pose.rightKnee.x - pose.rightHip.x) / standard,
+				"y": body.rightHip.y + (pose.rightKnee.y - pose.rightHip.y) / standard,
+				"z": body.rightHip.z + Math.pow(Math.abs(Math.pow(relativeLengths[8], 2) - Math.pow(coord[8], 2)), 0.5)
+			};
+			console.log(typeof (body.rightHip.z) + "||" + typeof (relativeLengths[8]) + "||" + typeof (coord[8]));
+			console.log(body.rightKnee.z);
+			body.rightAnkle = {
+				"x": body.rightKnee.x + (pose.rightAnkle.x - pose.rightKnee.x) / standard,
+				"y": body.rightKnee.y + (pose.rightAnkle.y - pose.rightKnee.y) / standard,
+				"z": body.rightKnee.z + Math.pow(Math.abs(Math.pow(relativeLengths[9], 2) - Math.pow(coord[9], 2)), 0.5)
+			};
+			body.leftKnee = {
+				"x": body.leftHip.x + (relb.x - rshld.x) / standard,
+				"y": body.leftHip.y + (pose.leftKnee.y - pose.leftHip.y) / standard,
+				"z": body.leftHip.z + Math.pow(Math.abs(Math.pow(relativeLengths[10], 2) - Math.pow(coord[10], 2)), 0.5)
+			};
+
+			body.leftAnkle = {
+				"x": body.leftKnee.x + (pose.leftAnkle.x - pose.leftKnee.x) / standard,
+				"y": body.leftKnee.y + (pose.leftAnkle.y - pose.leftKnee.y) / standard,
+				"z": body.leftKnee.z + Math.pow(Math.abs(Math.pow(relativeLengths[11], 2) - Math.pow(coord[11], 2)), 0.5)
+			};
+
+
+
+			console.log(body);
+			//firebase.database().ref('users/' + userId).set(body);
+
+			//Send Shit to Bridge Script in Unity
+			var jason = {
+				onex = body.leftWrist.x,
+				oney = body.leftWrist.y,
+				onez = body.leftWrist.z,
+
+				twox = body.leftElbow.x,
+				twoy = body.leftElbow.y,
+				twoz = body.leftElbow.z,
+
+				threex = body.leftAnkle.x,
+				threey = body.leftAnkle.y,
+				threez = body.leftAnkle.z,
+
+				fourx = body.leftKnee.x,
+				foury = body.leftKnee.y,
+				fourz = body.leftKnee.z,
+
+				fivex = body.rightWrist.x,
+				fivey = body.rightWrist.y,
+				fivez = body.rightWrist.z,
+
+				sixx = body.rightElbow.x,
+				sixy = body.rightElbow.y,
+				sixz = body.rightElbow.z,
+
+				sevenx = body.rightAnkle.x,
+				seveny = body.rightAnkle.y,
+				sevenz = body.rightAnkle.z,
+
+				eightx = body.rightKnee.x,
+				eighty = body.rightKnee.y,
+				eightz = body.rightKnee.z,
+
+				ninex = body.leftWrist.x,
+				niney = body.leftWrist.y,
+				ninez = body.leftWrist.z,
+
+				tenx = body.leftWrist.x,
+				teny = body.leftWrist.y,
+				tenz = body.leftWrist.z,
+
+				elevenx = body.leftWrist.x,
+				eleveny = body.leftWrist.y,
+				elevenz = body.leftWrist.z,
+
+				twelvex = body.leftWrist.x,
+				twelvey = body.leftWrist.y,
+				twelvez = body.leftWrist.z,
+
+				thirteenx = body.leftWrist.x,
+				thirteeny = body.leftWrist.y,
+				thirteenz = body.leftWrist.z
+			}
+			jsonString = JSON.stringify(jason);
+			unityInstance.SendMessage('Bridge', 'SetCoordList', jsonString);
+
+		}
+
+
+
+		function setup() {
+			createCanvas(640, 480);
+			video = createCapture(VIDEO);
+			video.hide();
+			poseNet = ml5.poseNet(video, modelLoaded);
+			poseNet.on('pose', gotPoses);
+		}
+
+
+
+		function calibratePose() {
+			calibrate = pose;
+
+			relativeLengths[0] = distanceCalc(calibrate.leftShoulder, calibrate.rightShoulder);
+			relativeLengths[1] = distanceCalc(calibrate.rightShoulder, calibrate.rightHip);
+			relativeLengths[2] = distanceCalc(calibrate.leftHip, calibrate.rightHip);
+			relativeLengths[3] = distanceCalc(calibrate.leftShoulder, calibrate.leftHip);
+			relativeLengths[4] = distanceCalc(calibrate.rightShoulder, calibrate.rightElbow);
+			relativeLengths[5] = distanceCalc(calibrate.rightElbow, calibrate.rightWrist);
+			relativeLengths[6] = distanceCalc(calibrate.leftShoulder, calibrate.leftElbow);
+			relativeLengths[7] = distanceCalc(calibrate.leftElbow, calibrate.leftWrist);
+			relativeLengths[8] = distanceCalc(calibrate.rightHip, calibrate.rightKnee);
+			relativeLengths[9] = distanceCalc(calibrate.rightKnee, calibrate.rightAnkle);
+			relativeLengths[10] = distanceCalc(calibrate.leftHip, calibrate.leftKnee);
+			relativeLengths[11] = distanceCalc(calibrate.leftKnee, calibrate.leftAnkle);
+			let standard = (relativeLengths[1] + relativeLengths[3]) / 2;
+			for (i = 0; i < 12; i++) {
+				relativeLengths[i] = relativeLengths[i] / standard;
+				console.log(relativeLengths[i]);
+			}
+			alert('Calibrated pose and got standard lengths');
+		}
+
+		function calibratePose2() {
+			calibrate2 = pose;
+			alert('Calibrated');
+		}
+
+		function calibratePose3() {
+			calibrate3 = pose;
+			alert('Calibrated');
+		}
+
+
+		function regression(x, y) {
+			order = 2;
+
+			var xMatrix = [];
+			var xTemp = [];
+			var yMatrix = numeric.transpose([y]);
+
+			for (j = 0; j < x.length; j++) {
+				xTemp = [];
+				for (i = 0; i <= order; i++) {
+					xTemp.push(1 * Math.pow(x[j], i));
+				}
+				xMatrix.push(xTemp);
+			}
+
+			var xMatrixT = numeric.transpose(xMatrix);
+			var dot1 = numeric.dot(xMatrixT, xMatrix);
+			var dotInv = numeric.inv(dot1);
+			var dot2 = numeric.dot(xMatrixT, yMatrix);
+			var solution = numeric.dot(dotInv, dot2);
+			//console.log("Coefficients a + bx^1 + cx^2...")
+			//console.log(solution);
+			return solution;
+		}
+
+		function guessDistanceEQs() {
+
+			let distA1 = Math.pow(Math.pow(calibrate.leftShoulder.x - calibrate.rightShoulder.x, 2) + Math.pow(calibrate.leftShoulder.y - calibrate.rightShoulder.y, 2), 0.5);
+			let distA2 = Math.pow(Math.pow(calibrate2.leftShoulder.x - calibrate2.rightShoulder.x, 2) + Math.pow(calibrate2.leftShoulder.y - calibrate2.rightShoulder.y, 2), 0.5);
+			let distA3 = Math.pow(Math.pow(calibrate3.leftShoulder.x - calibrate3.rightShoulder.x, 2) + Math.pow(calibrate3.leftShoulder.y - calibrate3.rightShoulder.y, 2), 0.5);
+
+			let distB1 = Math.pow(Math.pow(calibrate.leftShoulder.x - calibrate.leftHip.x, 2) + Math.pow(calibrate.leftShoulder.y - calibrate.leftHip.y, 2), 0.5);
+			let distB2 = Math.pow(Math.pow(calibrate2.leftShoulder.x - calibrate2.leftHip.x, 2) + Math.pow(calibrate2.leftShoulder.y - calibrate2.leftHip.y, 2), 0.5);
+			let distB3 = Math.pow(Math.pow(calibrate3.leftShoulder.x - calibrate3.leftHip.x, 2) + Math.pow(calibrate3.leftShoulder.y - calibrate3.leftHip.y, 2), 0.5);
+
+			let distC1 = Math.pow(Math.pow(calibrate.rightHip.x - calibrate.leftHip.x, 2) + Math.pow(calibrate.rightHip.y - calibrate.leftHip.y, 2), 0.5);
+			let distC2 = Math.pow(Math.pow(calibrate2.rightHip.x - calibrate2.leftHip.x, 2) + Math.pow(calibrate2.rightHip.y - calibrate2.leftHip.y, 2), 0.5);
+			let distC3 = Math.pow(Math.pow(calibrate3.rightHip.x - calibrate3.leftHip.x, 2) + Math.pow(calibrate3.rightHip.y - calibrate3.leftHip.y, 2), 0.5);
+
+			let distD1 = Math.pow(Math.pow(calibrate.rightHip.x - calibrate.rightShoulder.x, 2) + Math.pow(calibrate.rightHip.y - calibrate.rightShoulder.y, 2), 0.5);
+			let distD2 = Math.pow(Math.pow(calibrate2.rightHip.x - calibrate2.rightShoulder.x, 2) + Math.pow(calibrate2.rightHip.y - calibrate2.rightShoulder.y, 2), 0.5);
+			let distD3 = Math.pow(Math.pow(calibrate3.rightHip.x - calibrate3.rightShoulder.x, 2) + Math.pow(calibrate3.rightHip.y - calibrate3.rightShoulder.y, 2), 0.5);
+
+			let xA = [distA1, distA2, distA3];
+			let xB = [distB1, distB2, distB3];
+			let xC = [distC1, distC2, distC3];
+			let xD = [distD1, distD2, distD3];
+			let y = [3, 0, 6];
+
+			zAEq = regression(xA, y);
+			zBEq = regression(xB, y);
+			zCEq = regression(xC, y);
+			zDEq = regression(xD, y);
+			enableZ = 1;
+
+
+
+		}
+
+
+		function createZCoordiante() {
+			guessDistanceEQs();
+			let distAnow = Math.pow(Math.pow(pose.leftShoulder.x - pose.rightShoulder.x, 2) + Math.pow(pose.leftShoulder.y - pose.rightShoulder.y, 2), 0.5);
+			let distBnow = Math.pow(Math.pow(pose.leftShoulder.x - pose.leftHip.x, 2) + Math.pow(pose.leftShoulder.y - pose.leftHip.y, 2), 0.5);
+			let distCnow = Math.pow(Math.pow(pose.rightHip.x - pose.leftHip.x, 2) + Math.pow(pose.rightHip.y - pose.leftHip.y, 2), 0.5);
+			let distDnow = Math.pow(Math.pow(pose.rightHip.x - pose.rightShoulder.x, 2) + Math.pow(pose.rightHip.y - pose.rightShoulder.y, 2), 0.5);
+
+			let zA = zAEq[0][0] + zAEq[1][0] * distAnow + zAEq[2][0] * Math.pow(distAnow, 2);
+			let zB = zBEq[0][0] + zBEq[1][0] * distBnow + zBEq[2][0] * Math.pow(distBnow, 2);
+			let zC = zCEq[0][0] + zCEq[1][0] * distCnow + zCEq[2][0] * Math.pow(distCnow, 2);
+			let zD = zDEq[0][0] + zDEq[1][0] * distDnow + zDEq[2][0] * Math.pow(distDnow, 2);
+			coreZ = (zA + zB + zC + zD) / 4;
+			enableZ = 1;
+			return coreZ;
+		}
+
+
+
+		function gotPoses(poses) {
+			//console.log(poses);
+			if (poses.length > 0) {
+				pose = poses[0].pose;
+				skeleton = poses[0].skeleton;
+
+				if (enableZ === 1) {
+					coreZ = createZCoordiante();
+					writeUserData("test", pose);
+					//writeUserData("testz", coreZ);
+				}
+
+
+			}
+		}
+
+
+
+
+
+		function modelLoaded() {
+			console.log('poseNet ready');
+		}
+
+		function draw() {
+			image(video, 0, 0);
+
+			if (pose) {
+				let eyeR = pose.rightEye;
+				let eyeL = pose.leftEye;
+				let d = dist(eyeR.x, eyeR.y, eyeL.x, eyeL.y);
+				fill(255, 0, 0);
+				ellipse(pose.nose.x, pose.nose.y, d);
+				fill(0, 0, 255);
+				ellipse(pose.rightWrist.x, pose.rightWrist.y, 32);
+				ellipse(pose.leftWrist.x, pose.leftWrist.y, 32);
+
+				for (let i = 0; i < pose.keypoints.length; i++) {
+					let x = pose.keypoints[i].position.x;
+					let y = pose.keypoints[i].position.y;
+					fill(0, 255, 0);
+					ellipse(x, y, 16, 16);
+				}
+
+				for (let i = 0; i < skeleton.length; i++) {
+					let a = skeleton[i][0];
+					let b = skeleton[i][1];
+					strokeWeight(2);
+					stroke(255);
+					line(a.position.x, a.position.y, b.position.x, b.position.y);
+				}
+
+
+
+
+
+			}
+		}
+
+	</script>
+	<div class="webgl-content">
+		<div id="unityContainer" style="width: 960px; height: 600px"></div>
+		<div class="footer">
+			<div class="webgl-logo"></div>
+			<div class="fullscreen" onclick="unityInstance.SetFullscreen(1)"></div>
+			<div class="title">WebGL_HIW</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
