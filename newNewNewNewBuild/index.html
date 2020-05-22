@@ -9,7 +9,7 @@
 	<script src="TemplateData/UnityProgress.js"></script>
 	<script src="Build/UnityLoader.js"></script>
 	<script>
-		var unityInstance = UnityLoader.instantiate("unityContainer", "Build/Desktop.json", { onProgress: UnityProgress });
+		var unityInstance = UnityLoader.instantiate("unityContainer", "Build/newNewNewNewNew.json", { onProgress: UnityProgress });
 
 		var testObject = { name: "John", age: 20 };
 		var jsonString = JSON.stringify(testObject);
@@ -175,61 +175,62 @@
 			//firebase.database().ref('users/' + userId).set(body);
 
 			//Send Shit to Bridge Script in Unity
-			var jason = {
-				onex = body.leftWrist.x,
-				oney = body.leftWrist.y,
-				onez = body.leftWrist.z,
+			/*
+			let jason = {
+				onex: body.leftWrist.x,
+				oney: body.leftWrist.y,
+				onez: body.leftWrist.z,
 
-				twox = body.leftElbow.x,
-				twoy = body.leftElbow.y,
-				twoz = body.leftElbow.z,
+				twox: body.leftElbow.x,
+				twoy: body.leftElbow.y,
+				twoz: body.leftElbow.z,
 
-				threex = body.leftAnkle.x,
-				threey = body.leftAnkle.y,
-				threez = body.leftAnkle.z,
+				threex: body.leftAnkle.x,
+				threey: body.leftAnkle.y,
+				threez: body.leftAnkle.z,
 
-				fourx = body.leftKnee.x,
-				foury = body.leftKnee.y,
-				fourz = body.leftKnee.z,
+				fourx: body.leftKnee.x,
+				foury: body.leftKnee.y,
+				fourz: body.leftKnee.z,
 
-				fivex = body.rightWrist.x,
-				fivey = body.rightWrist.y,
-				fivez = body.rightWrist.z,
+				fivex: body.rightWrist.x,
+				fivey: body.rightWrist.y,
+				fivez: body.rightWrist.z,
 
-				sixx = body.rightElbow.x,
-				sixy = body.rightElbow.y,
-				sixz = body.rightElbow.z,
+				sixx: body.rightElbow.x,
+				sixy: body.rightElbow.y,
+				sixz: body.rightElbow.z,
 
-				sevenx = body.rightAnkle.x,
-				seveny = body.rightAnkle.y,
-				sevenz = body.rightAnkle.z,
+				sevenx: body.rightAnkle.x,
+				seveny: body.rightAnkle.y,
+				sevenz: body.rightAnkle.z,
 
-				eightx = body.rightKnee.x,
-				eighty = body.rightKnee.y,
-				eightz = body.rightKnee.z,
+				eightx: body.rightKnee.x,
+				eighty: body.rightKnee.y,
+				eightz: body.rightKnee.z,
 
-				ninex = body.leftWrist.x,
-				niney = body.leftWrist.y,
-				ninez = body.leftWrist.z,
+				ninex: body.leftWrist.x,
+				niney: body.leftWrist.y,
+				ninez: body.leftWrist.z,
 
-				tenx = body.leftWrist.x,
-				teny = body.leftWrist.y,
-				tenz = body.leftWrist.z,
+				tenx: body.leftWrist.x,
+				teny: body.leftWrist.y,
+				tenz: body.leftWrist.z,
 
-				elevenx = body.leftWrist.x,
-				eleveny = body.leftWrist.y,
-				elevenz = body.leftWrist.z,
+				elevenx: body.leftWrist.x,
+				eleveny: body.leftWrist.y,
+				elevenz: body.leftWrist.z,
 
-				twelvex = body.leftWrist.x,
-				twelvey = body.leftWrist.y,
-				twelvez = body.leftWrist.z,
+				twelvex: body.leftWrist.x,
+				twelvey: body.leftWrist.y,
+				twelvez: body.leftWrist.z,
 
-				thirteenx = body.leftWrist.x,
-				thirteeny = body.leftWrist.y,
-				thirteenz = body.leftWrist.z
-			}
-			jsonString = JSON.stringify(jason);
-			unityInstance.SendMessage('Bridge', 'SetCoordList', jsonString);
+				thirteenx: body.leftWrist.x,
+				thirteeny: body.leftWrist.y,
+				thirteenz: body.leftWrist.z
+			} */
+			//jsonString = JSON.stringify(jason);
+			unityInstance.SendMessage('Bridge', 'SetCoordList', JSON.stringify(body));
 
 		}
 
