@@ -73,8 +73,8 @@
 		  measurementId: "G-DSXCXXKDZK"
 		};
 		// Initialize Firebase
-		firebase.initializeApp(firebaseConfig);
-		var database = firebase.database();
+//		firebase.initializeApp(firebaseConfig);
+//		var database = firebase.database();
 
 		function writeUserData(userId, pose) {
 			
@@ -99,35 +99,35 @@
 			
 			body.cZ = coreZ;
 			//get core coordinates (shoulders, hips)
-			body.leftShoulder = {"x" : 0.0, "y" : 0.0, "z" : 0.0};
-			body.rightShoulder = {"x" : 0.0, "y" : 0.0, "z" : 0.0};
-			body.leftHip = {"x" : 0.0, "y" : 0.0, "z" : 0.0};
-			body.rightHip = {"x" : 0.0, "y" : 0.0, "z" : 0.0};
+			body.leftShoulder = {"x" : pose.leftShoulder.x, "y" : pose.leftShoulder.y,  "z" : 0.0};
+			body.rightShoulder = {"x" : pose.rightShoulder.x, "y" : pose.rightShoulder.y, "z" : 0.0};
+			body.leftHip = {"x" : pose.leftHip.x, "y" : pose.leftHip.y, "z" : 0.0};
+			body.rightHip = {"x" : pose.rightHip.x, "y" : pose.rightHip.y, "z" : 0.0};
 			
 			//get arm coordinates
 			rshld = pose.rightShoulder;
 			relb = pose.rightElbow;
 			body.rightElbow = {
-				"x" : body.rightShoulder.x + (relb.x - rshld.x) / standard,
-				"y" : body.rightShoulder.y + (pose.rightElbow.y - pose.rightShoulder.y) / standard,
+				"x" : pose.rightElbow.x,
+				"y" : pose.rightElbow.y,
 				"z" : body.rightShoulder.z + Math.pow(Math.abs(Math.pow(relativeLengths[4], 2) - Math.pow(coord[4], 2)), 0.5)
 			};
 			console.log(typeof(body.rightShoulder.z) + "||" + typeof(relativeLengths[4]) + "||" + typeof(coord[4]));
 			console.log(body.rightElbow.z);
 			body.rightWrist = {
-				"x" : body.rightElbow.x + (pose.rightWrist.x - pose.rightElbow.x) / standard,
-				"y" : body.rightElbow.y + (pose.rightWrist.y - pose.rightElbow.y) / standard,
+				"x" : pose.rightWrist.x,
+				"y" : pose.rightWrist.y,
 				"z" : body.rightElbow.z + Math.pow(Math.abs(Math.pow(relativeLengths[5], 2) - Math.pow(coord[5], 2)), 0.5)
 			};
 			body.leftElbow = {
-				"x" : body.leftShoulder.x + (pose.leftElbow.x - pose.leftShoulder.x) / standard,
-				"y" : body.leftShoulder.y + (pose.leftElbow.y - pose.leftShoulder.y) / standard,
+				"x" : pose.leftElbow.x,
+				"y" : pose.leftElbow.y,
 				"z" : body.leftShoulder.z + Math.pow(Math.abs(Math.pow(relativeLengths[6], 2) - Math.pow(coord[6], 2)), 0.5)
 			};
 			
 			body.leftWrist = {
-				"x" : body.leftElbow.x + (pose.leftWrist.x - pose.leftElbow.x) / standard,
-				"y" : body.leftElbow.y + (pose.leftWrist.y - pose.leftElbow.y) / standard,
+				"x" : pose.leftWrist.x,
+				"y" : pose.leftWrist.y,
 				"z" : body.leftElbow.z + Math.pow(Math.abs(Math.pow(relativeLengths[7], 2) - Math.pow(coord[7], 2)), 0.5)
 			};
 			
@@ -135,26 +135,26 @@
 			
 			
 			body.rightKnee = {
-				"x" : body.rightHip.x + (pose.rightKnee.x - pose.rightHip.x) / standard,
-				"y" : body.rightHip.y + (pose.rightKnee.y - pose.rightHip.y) / standard,
+				"x" : pose.rightKnee.x,
+				"y" : pose.rightKnee.y,
 				"z" : body.rightHip.z + Math.pow(Math.abs(Math.pow(relativeLengths[8], 2) - Math.pow(coord[8], 2)), 0.5)
 			};
 			console.log(typeof(body.rightHip.z) + "||" + typeof(relativeLengths[8]) + "||" + typeof(coord[8]));
 			console.log(body.rightKnee.z);
 			body.rightAnkle = {
-				"x" : body.rightKnee.x + (pose.rightAnkle.x - pose.rightKnee.x) / standard,
-				"y" : body.rightKnee.y + (pose.rightAnkle.y - pose.rightKnee.y) / standard,
+				"x" : pose.rightAnkle.x,
+				"y" : pose.rightAnkle.y,
 				"z" : body.rightKnee.z + Math.pow(Math.abs(Math.pow(relativeLengths[9], 2) - Math.pow(coord[9], 2)), 0.5)
 			};
 			body.leftKnee = {
-				"x" : body.leftHip.x + (relb.x - rshld.x) / standard,
-				"y" : body.leftHip.y + (pose.leftKnee.y - pose.leftHip.y) / standard,
+				"x" : pose.leftKnee.x,
+				"y" : pose.leftKnee.y,
 				"z" : body.leftHip.z + Math.pow(Math.abs(Math.pow(relativeLengths[10], 2) - Math.pow(coord[10], 2)), 0.5)
 			};
 			
 			body.leftAnkle = {
-				"x" : body.leftKnee.x + (pose.leftAnkle.x - pose.leftKnee.x) / standard,
-				"y" : body.leftKnee.y + (pose.leftAnkle.y - pose.leftKnee.y) / standard,
+				"x" : pose.leftAnkle.x,
+				"y" : pose.leftAnkle.y,
 				"z" : body.leftKnee.z + Math.pow(Math.abs(Math.pow(relativeLengths[11], 2) - Math.pow(coord[11], 2)), 0.5)
 			};
 			
