@@ -20,13 +20,13 @@
   
   
     <script src="numeric.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
-   
+  <!--  <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-app.js"></script>
+  -->
     <!-- TODO: Add SDKs for Firebase products that you want to use
           https://firebase.google.com/docs/web/setup#available-libraries -->
-          <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
+    <!--      <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-auth.js"></script>
           <script src="https://www.gstatic.com/firebasejs/7.14.4/firebase-database.js"></script>
-    
+	-->
     
     
     <!--<script src="sketch.js"></script> -->
@@ -62,16 +62,16 @@
 			let distanceCalc = Math.pow((Math.pow(obj1.x-obj2.x, 2) + Math.pow(obj1.y-obj2.y, 2)),0.5);
 			return distanceCalc;
 		}
-		var firebaseConfig = {
-		  apiKey: "AIzaSyBd_A-fJYsRZRKn7AZXaOnMf8XMq134pTs",
-		  authDomain: "poseestimationtherapy.firebaseapp.com",
-		  databaseURL: "https://poseestimationtherapy.firebaseio.com",
-		  projectId: "poseestimationtherapy",
-		  storageBucket: "poseestimationtherapy.appspot.com",
-		  messagingSenderId: "491980698977",
-		  appId: "1:491980698977:web:8810b48ab4421379dbc120",
-		  measurementId: "G-DSXCXXKDZK"
-		};
+//		var firebaseConfig = {
+//		  apiKey: "AIzaSyBd_A-fJYsRZRKn7AZXaOnMf8XMq134pTs",
+//		  authDomain: "poseestimationtherapy.firebaseapp.com",
+//		  databaseURL: "https://poseestimationtherapy.firebaseio.com",
+//		  projectId: "poseestimationtherapy",
+//		  storageBucket: "poseestimationtherapy.appspot.com",
+//		  messagingSenderId: "491980698977",
+//		  appId: "1:491980698977:web:8810b48ab4421379dbc120",
+//		  measurementId: "G-DSXCXXKDZK"
+//		};
 		// Initialize Firebase
 //		firebase.initializeApp(firebaseConfig);
 //		var database = firebase.database();
@@ -161,7 +161,7 @@
 						
 			
 			console.log(body);
-		  firebase.database().ref('users/' + userId).set(body);
+//	  firebase.database().ref('users/' + userId).set(body);
 		  
 		}
 
