@@ -1,23 +1,46 @@
-import { Product } from "../types.ts";
+import { Doctor, Patient } from "../types.ts";
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-let products = [
+let docs = [
   {
     id: "1",
-    name: "Product One",
-    description: "This is uno",
-    price: 10,
+    firstName: "Lil",
+    lastName: "Boat",
+    cost: 20,
+    tier: 2,
+    company: "Gang Gang Inc",
   },
 ];
 
-// @desc    Get all products
-// @route   GET /api/products
+let pats = [
+  {
+    id: "32",
+    firstName: "Bobby",
+    lastName: "Shmurda",
+    modules: "1,2,3,",
+    usage: 20,
+    doctorId: "1",
+  }
+]
 
-const getProducts = ({ response }: { response: any }) => {
+// @desc    Get all patients
+// @route   GET /api/patients
+
+const getPatients = ({ response }: { response: any }) => {
   response.body = {
     success: true,
-    data: products,
+    data: pats,
   };
 };
+
+//@desc Get all docs
+//@route  GET /api/docs
+
+const getDoctors = ({ response }: {response: any}) => {
+  response.body = {
+    success: true,
+    data: docs,
+  }
+}
 
 // @desc    Get single products
 // @route   GET /api/products/:id
