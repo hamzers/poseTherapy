@@ -1,4 +1,4 @@
-import { Doctor, Patient } from "../types.ts";
+import { Doctor, Patient, patMod } from "../types.ts";
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
 let docs = [
   {
@@ -11,12 +11,14 @@ let docs = [
   },
 ];
 
+
+
 let pats = [
   {
     id: "32",
     firstName: "Bobby",
     lastName: "Shmurda",
-    modules: "1,2,3,",
+    modules: [{id: 1, doctorId: "2"}],
     usage: 20,
     doctorId: "1",
   }
@@ -91,7 +93,7 @@ const getDoctor = (
 // @route   POST /api/patients
 
 const addPatient = async (
-  { request, response }: { request: any; response: any },
+  { request, response }: { params: {apiAuth : string, docId: string};request: any; response: any },
 ) => {
   const body = await request.body();
 
@@ -154,7 +156,7 @@ const updatePatient = async (
   if (patient) {
     const body = await request.body();
 
-    const updateData: { firstName?: string; lastName?: string; modules?: string; usage?: number; doctorId?: string} =
+    const updateData: { firstName?: string; lastName?: string; modules?: patMod[]; usage?: number; doctorId?: string} =
       body.value;
 
     pats = pats.map((p) =>

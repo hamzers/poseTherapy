@@ -1,3 +1,8 @@
+//Patient Module list
+export interface patMod {
+  id: number;
+  doctorId: string;
+}
 export interface Product {
   id: string;
   name: string;
@@ -9,7 +14,7 @@ export interface Patient {
   id: string;
   firstName: string;
   lastName: string;
-  modules: string;
+  modules: patMod[];
   usage: number;
   doctorId: string;
 }
@@ -23,17 +28,42 @@ export interface Doctor {
   company: string;
 }
 
+export interface user {
+  id: string;
+  firstName: string;
+  lastName: string;
+  type: string;
+  data: Patient | Doctor, 
+}
+
 export interface Module {
-  id: number;
+  id: string;
   name: string;
+  url: string;
+  icoUrl: string;
   rate: number;
 }
 
 export interface DevModule {
-  id: number;
+  id: string;
   name: string;
   rate: number;
   purpose: string;
   mainDev: string;
   deployable: boolean;
+}
+
+export interface invite {
+  id: string;
+  doctorId: string;
+  patientEmail: string;
+  moduleId: string;
+  completed: boolean;
+}
+
+export interface apiKey {
+  id: string;
+  userEmail: string;
+  uuid: string;
+  createDate: Date;
 }
