@@ -1,5 +1,7 @@
 import { Router, send } from "https://deno.land/x/oak/mod.ts";
 import { main } from "./main/page.ts";
+import { testPost } from "./controllers/testinfo.ts"
+
 import {
   getProducts,
   getProduct,
@@ -27,9 +29,6 @@ import {
   deleteApiToken,
 } from "./controllers/apiVerif.ts";
 
-import {
-  testPost
-} from "./controllers/testinfo.ts";
 const router = new Router();
 
 router.post("/api/api", requestApiToken)

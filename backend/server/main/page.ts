@@ -1,65 +1,87 @@
-import { css } from "./style.ts";
-import { font1 } from "./font.ts";
-import { sidebar, intro, secs } from "./elements.ts";
-const gang = "test";
-
-//GET landing page
-
-const header = `
-<head>
-  <title>Server Page</title>
-  ${font1}
-  ${css}
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
-`;
-const page = new TextEncoder().encode(`
-${ header }
-<body>
-  ${sidebar}  
-  <div id= "wrapper">
-    ${intro}
-    ${secs}  
-  </div>
-  <footer id="footer" class="wrapper style1-alt">
-    <div class="inner">
-      <ul class="menu">
-        <li>&copy; AlgoImplement Technologies. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
-      </ul>
-    </div>
-  </footer>
-
-</body>
-<script>
-function submitForm() {
-  
-    var jsonArray = [];
-
-     var splittedFormData = $("#myForm").serialize().split('&');
-
-           $.each(splittedFormData, function (key, value) {
-
-               item = {};
-               var splittedValue = value.split('=');               
-               item["name"] = splittedValue[0];
-               item["email"] = splittedValue[1];
-               item["message"] = splittedValue[2];
-               jsonArray.push(item);
-           });
-
-    console.log(jsonArray);
-
-    var formData = JSON.stringify($("#myForm").serializeArray());
-    console.log(formData);
-}
-</script>
-
-`);
-
-
 
 const main = ({ response }: { response: any }) => {
-  response.body = page;
+  response.body = new TextEncoder().encode(`
+  <html>
+  <head>
+      <title></title>
+  </head>
+  <body>
+  
+  <form>
+    <div><input type="text" name="a" value="1" id="a"></div>
+    <div><input type="text" name="b" value="2" id="b"></div>
+  
+    <div><select name="e">
+      <option value="5" selected="selected">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+    </select></div>
+    <div>
+      <input type="submit" name="g" value="Submit" id="g">
+    </div>
+    <p id="disp"></p>
+  </form>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  </body>
+  <script>
+  $( "form" ).submit(function( event ) {
+    var data = $( this ).serializeArray();
+    var newData = new Object();
+    newData.name = data[0].value;
+    newData.email = data[1].value;
+    newData.selection = data[2].value;
+    console.log(JSON.stringify(newData));
+    newData = JSON.stringify(newData);
+    
+    $.ajax({
+          url:"/getinfo",
+          type:"POST",
+  
+          data: newData,
+          contentType:"application/json; charset=utf-8",
+          dataType:"json",
+          success:function(response) {
+            console.log(response);
+            //document.getElementById("total_items").value=response;
+           document.getElementById("disp").innerHTML =response.data.value.name;
+         },
+         error:function(){
+          alert("error");
+         }
+  
+        });
+    
+    
+    event.preventDefault();
+  });
+  </script>
+  </html>
+  `);
 };
 
-export { main };
+const testPost = async (
+  { request, response }: { request: any; response: any },
+) => {
+  console.log(request);
+  let body = "adf";
+  console.log(request);
+  //const body = await request.body();
+  console.log(body);
+  if (!request) {
+    response.status = 400;
+    response.body = {
+      success: false,
+      msg: "No data",
+    };
+  } else {
+   
+    response.status = 201;
+    response.body = {
+      success: true,
+      data: request,
+    };
+  }
+};
+
+export { main, testPost };
