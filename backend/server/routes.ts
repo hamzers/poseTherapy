@@ -1,4 +1,4 @@
-import { Router } from "https://deno.land/x/oak/mod.ts";
+import { Router, send } from "https://deno.land/x/oak/mod.ts";
 import { main } from "./main/page.ts";
 import {
   getProducts,
@@ -27,6 +27,9 @@ import {
   deleteApiToken,
 } from "./controllers/apiVerif.ts";
 
+import {
+  testPost
+} from "./controllers/testinfo.ts";
 const router = new Router();
 
 router.post("/api/api", requestApiToken)
@@ -51,6 +54,7 @@ router.get("/api/patients", getPatients)
   .put("/api/patients/:id", updatePatient)
   .delete("/api/patients/:id", deletePatient);
 
-router.get("/", main);
+router.get("/", main)
+  .post("/getinfo", testPost);
 
 export default router;
