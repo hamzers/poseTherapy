@@ -86,13 +86,13 @@
 							initialize: function() {
 
 								// Deactivate section.
-									$section.addClass('inactive');
+									$section.addClass('active');
 
 							},
 							enter: function() {
 
 								// Activate section.
-									$section.removeClass('inactive');
+									$section.removeClass('active');
 
 								// No locked links? Deactivate all links and activate this section's one.
 									if ($sidebar_a.filter('.active-locked').length == 0) {

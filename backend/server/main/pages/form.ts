@@ -3,18 +3,17 @@ const main = ({ response }: { response: any }) => {
   response.body = new TextEncoder().encode(`
   <html>
   <head>
-      <title></title>
+      <title>Signup for an account</title>
   </head>
   <body>
   
   <form>
-    <div><input type="text" name="a" value="1" id="a"></div>
-    <div><input type="text" name="b" value="2" id="b"></div>
+    <div><input type="text" name="email" value="" id="a"></div>
+    <div><input type="text" name="password" value="" id="b"></div>
   
     <div><select name="e">
-      <option value="5" selected="selected">5</option>
-      <option value="6">6</option>
-      <option value="7">7</option>
+      <option value="patient" selected="selected">Patient</option>
+      <option value="doctor">Doctor</option>
     </select></div>
     <div>
       <input type="submit" name="g" value="Submit" id="g">
