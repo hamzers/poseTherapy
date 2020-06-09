@@ -1,8 +1,5 @@
 import { Router, send } from "https://deno.land/x/oak/mod.ts";
-import { main } from "./main/pages/form.ts";
 import { testPost } from "./controllers/testinfo.ts";
-import { index } from "./main/index.ts";
-import { userAuth } from "./main/pages/userAuth.ts";
 import {
   getProducts,
   getProduct,
@@ -53,9 +50,5 @@ router.get("/api/patients", getPatients)
   .post("/api/patients", addPatient)
   .put("/api/patients/:id", updatePatient)
   .delete("/api/patients/:id", deletePatient);
-
-router.get("/", index)
-  .get("/userAuth", userAuth)
-  .post("/getinfo", testPost);
 
 export default router;
