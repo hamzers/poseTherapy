@@ -1,12 +1,12 @@
 import { Router, send } from "https://deno.land/x/oak/mod.ts";
-import { testPost } from "./controllers/testinfo.ts";
+import { testPost } from "./controllers/oldapis/testinfo.ts";
 import {
   getProducts,
   getProduct,
   addProduct,
   updateProduct,
   deleteProduct,
-} from "./controllers/products.ts";
+} from "./controllers/oldapis/products.ts";
 
 import {
   getDoctors,
@@ -19,19 +19,15 @@ import {
   addPatient,
   updatePatient,
   deletePatient,
-} from "./controllers/users.ts";
+} from "./controllers/oldapis/users.ts";
+
 
 import {
-  requestApiToken,
-  getApiStatus,
-  deleteApiToken,
-} from "./controllers/apiVerif.ts";
+  createUser, finishAccSetup,
+} from "./controllers/users.ts"
 
 const router = new Router();
 
-router.post("/api/api", requestApiToken)
-  .get("/api/api/:id", getApiStatus)
-  .delete("/api/api/:id", deleteApiToken);
 
 router.get("/api/products", getProducts)
   .get("/api/products/:id", getProduct)
@@ -45,10 +41,12 @@ router.get("/api/doctors", getDoctors)
   .put("/api/doctors/:id", updateDoctor)
   .delete("/api/doctors/:id", deleteDoctor);
 
-router.get("/api/patients", getPatients)
-  .get("/api/patients/:id", getPatient)
-  .post("/api/patients", addPatient)
+router.post("/api/getPatients", getPatients)
   .put("/api/patients/:id", updatePatient)
   .delete("/api/patients/:id", deletePatient);
+
+router.post("/api/createUser", createUser);
+router.post("/api/finishSetup", finishAccSetup);
+
 
 export default router;
