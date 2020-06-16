@@ -5,6 +5,7 @@ client.connectWithUri("mongodb://localhost:27017");
 
 const db = client.database("mylib");
 const users = db.collection("users");
-//const modules = db.collection("modules");
+const moduleTemps = db.collection("moduleTemplates");
+const modules = db.collection("modules");
 //const activeKeys = db.collection("keys");
-export { users };
+export { users, modules, moduleTemps};

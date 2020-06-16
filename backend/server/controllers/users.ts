@@ -1,28 +1,7 @@
-import { addUser, updateUserInfo } from "../database/userActions.ts";
-interface newUser {
-    userId: string;
-    email: string;
-};
-
-interface userUpdate {
-    userId:string;
-    email: string;
-    updates: {
-        type: string;
-        fName: string;
-        lName: string;
-        address: string;
-    };
-}
+import { addUser, updateUserInfo, getUserInfo } from "../database/userActions.ts";
+import { newUser, userUpdate, getUser } from "../types.ts"
 
 
-interface mod {
-    type: string;
-    patientId: string;
-    docId: string; 
-    modId: string;
-    data: JSON;
-}
 
 const createUser = async (
     { request, response }: { request: any; response: any },
@@ -70,5 +49,37 @@ const finishAccSetup = async (
     }
 };
 
+const getUserData = async (
+  { request, response }: { request: any; response: any },
+) => {
+  const body = await request.body();
 
-export { createUser, finishAccSetup }
+
+  if (request.hasBody) {
+    const user : getUser = body.value;
+    const userData = await getUserInfo(user.userId, user.email, user.apiKey);
+    if (userData != null) {
+      response.status = 200;
+      response.body = {
+        success: true,
+        data: userData,
+      };
+    } else {
+      response.status = 400;
+      response.body = {
+        success: false,
+        data: "invalid",
+      };
+    }
+    
+    
+  } else {
+    response.status = 401;
+    response.body = {
+      success: false,
+      data: "invalid",
+    };
+  }
+};
+
+export { createUser, finishAccSetup, getUserData }

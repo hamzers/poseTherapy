@@ -10,6 +10,15 @@ async function checkUserExist(userId: string, email: string) {
     }
 };
 
+async function validUser(userId: string, email: string) {
+    let userid = await users.findOne({userId: `${userId}`});
+    let userEmail = await users.findOne({username: `${email}`});
+    if (userid && userEmail) {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 async function addUser(uid: string, username:string) {
     let exists = await checkUserExist(uid, username);
@@ -50,17 +59,29 @@ async function updateUserInfo(uid: string, username: string, updates: any) {
         { $set: updates },
     );
     console.log(result);
+    return result;
 };
 
+//get module list from user
+async function updateModList(uid: string, modId: string) {
+    const user = await users.findOne({userId: uid});
+    const mods = user.modules;
+    mods.add(modId);
+    const z = await users.updateOne(
+        { userId: `${uid}` },
+        { $set: {modules: mods} },
+    );
+    return z;
+}
+
+
 async function getUserInfo(uid: string, username: string, apiKey: string) {
-    const check = await checkUserExist(uid, username);
+    const check = await validUser(uid, username);
     if (check) {
         const result = await users.findOne({userId: `${uid}`});
         return result;
     } else {
-        return {
-            body:"failure",
-        };
+        return null;
     }
 
 }
@@ -75,5 +96,5 @@ let data =  {
 await updateUserInfo("lkasdjkflsaf2323asdfas", "hmshaikh19@gmail.com", data );
 var userbase = await users.find();
 console.log(userbase);
-export {addUser, updateUserInfo};
+export {addUser, updateUserInfo, getUserInfo, updateModList};
 

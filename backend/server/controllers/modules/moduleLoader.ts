@@ -1,0 +1,1 @@
+import {module, patientModule} from "../../types.ts";

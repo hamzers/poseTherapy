@@ -1,57 +1,44 @@
 //Patient Module list
-export interface patMod {
-  id: number;
-  doctorId: string;
-}
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
+export interface module {
+  readonly modId: string;
+  modName: string; //Module name
+  type: string; //type: form or webgame or etc
+  rate: number; //price rate for module
+  data: any; //Data storage template for module
+
 }
 
-export interface Patient {
-  id: string;
-  firstName: string;
-  lastName: string;
-  modules: patMod[];
-  usage: number;
-  doctorId: string;
+export interface patientModule {
+  umid: string; //unique mod id for that patient
+  mod: module;  // module and its data
+  readonly docId: string;
+  readonly patId: string;
 }
 
-export interface Doctor {
-  id: string;
-  firstName: string;
-  lastName: string;
-  cost: number;
-  tier: number;
-  company: string;
+
+export interface newUser {
+  userId: string;
+  email: string;
+};
+
+export interface userUpdate {
+  userId:string;
+  email: string;
+  updates: {
+      type: string;
+      fName: string;
+      lName: string;
+      address: string;
+  };
 }
 
-export interface user {
-  id: string;
-  firstName: string;
-  lastName: string;
-  type: string;
-  data: Patient | Doctor, 
+export interface getUser {
+userId: string;
+email: string;
+apiKey: string;
 }
 
-export interface Module {
-  id: string;
-  name: string;
-  url: string;
-  icoUrl: string;
-  rate: number;
-}
 
-export interface DevModule {
-  id: string;
-  name: string;
-  rate: number;
-  purpose: string;
-  mainDev: string;
-  deployable: boolean;
-}
 
 export interface invite {
   id: string;
@@ -61,9 +48,14 @@ export interface invite {
   completed: boolean;
 }
 
+
+
+
+
 export interface apiKey {
   id: string;
   userEmail: string;
   uuid: string;
   createDate: Date;
 }
+
