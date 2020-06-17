@@ -2,7 +2,7 @@ import { moduleTemps, modules } from "./mongo.ts";
 import { updateModList } from  "./userActions.ts";
 
 import { v4 } from "https://deno.land/std/uuid/mod.ts";
-import {module, patientModule} from "../types.ts"
+import {module, patientModule, modRequest} from "../types.ts"
 
 
 
@@ -22,25 +22,29 @@ async function getPatientModule(modId: string) {
     return module;
 }
 
-async function assignModule(modId: string, patientId: string, patientEmail: string, doctorId: string) {
+async function assignModule(req: modRequest) {
+    
     try {
-        let mod = await getModuleTemp(modId);
+        let mod = await getModuleTemp(req.modId);
         const newMod: patientModule = {
             umid: v4.generate(),
             mod: mod,
-            docId: doctorId,
-            patId: patientId,
+            docId: req.docId,
+            patId: req.patId,
         };
         //insert the mods 
-        const insert = modules.insertOne(newMod);
+        const insert = await modules.insertOne(newMod);
         //insert modIds into patient and doctor
-        await updateModList(patientId, newMod.umid);
-        await updateModList(doctorId, newMod.umid);
+        await updateModList(req.patId, newMod.umid);
+        await updateModList(req.docId, newMod.umid);
         return {
             success: true,
         };
     } catch (error) {
-        return error;
+        return {
+            status: 0,
+            error: error,
+        };
     }
 }
 

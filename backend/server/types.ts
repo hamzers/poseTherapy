@@ -3,7 +3,7 @@ export interface module {
   readonly modId: string;
   modName: string; //Module name
   type: string; //type: form or webgame or etc
-  rate: number; //price rate for module
+  rate: number; //price rate for module (per patient per month)
   data: any; //Data storage template for module
 
 }
@@ -13,6 +13,12 @@ export interface patientModule {
   mod: module;  // module and its data
   readonly docId: string;
   readonly patId: string;
+}
+
+export interface modRequest {
+  docId: string;
+  patId: string;
+  modId: string;
 }
 
 
@@ -33,9 +39,9 @@ export interface userUpdate {
 }
 
 export interface getUser {
-userId: string;
-email: string;
-apiKey: string;
+  userId: string;
+  email: string;
+  apiKey: string;
 }
 
 
@@ -47,8 +53,6 @@ export interface invite {
   moduleId: string;
   completed: boolean;
 }
-
-
 
 
 
