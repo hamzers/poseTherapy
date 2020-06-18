@@ -1,0 +1,117 @@
+* {
+	margin: 0;
+	padding: 0;
+	font-family: "Century Gothic";
+	color: white;
+	/*background-image:url("http://wallpapersrang.com/wp-content/uploads/2015/12/hd-wallpaper-rainbow-cool-backgrounds-wallpapers-hd-wallpapers-1.jpg"); margin: 0; padding: 0;*/
+
+
+}
+
+body{
+	/*background-color: #00CCFF;*/
+	/*background-image:url("img/imag.png"); margin: 0; padding: 0;*/
+	background-color: blue;
+
+
+}
+
+#Logo {
+	height:7%;
+	background-color: blue;
+	text-align: center;
+	/*background-image:url("img/imag.png"); margin: 0; padding: 0;*/
+
+
+
+
+}
+
+
+
+#menu {
+	float:left;
+	width:auto;
+	height: 71vh;
+	background-color: black;
+	border: 1px solid white;
+	/*background-image: url("http://tozandelman.co.nz/wp-content/uploads/2013/04/background1.jpg"); margin: 0; padding: 0;*/
+	background-image:url("img/imag.png"); margin: 0; padding: 0;
+	overflow-y: auto;
+
+
+}
+
+#menu2 {
+	float:left;
+	width:auto;
+	height: 71vh;
+	background-color: black;
+	border: 1px solid white;
+	/*background-image: url("http://tozandelman.co.nz/wp-content/uploads/2013/04/background1.jpg"); margin: 0; padding: 0;*/
+	background-image:url("img/imag.png"); margin: 0; padding: 0;
+	overflow-y: auto;
+
+
+}
+
+
+
+#content {
+	height:71vh;
+	width: auto;
+	border: 1px solid white;
+	overflow: auto;
+	background-color: black;
+	/*background-image:url("img/imag.png"); margin: 0; padding: 0;*/
+
+
+}
+
+
+
+#footer {
+	border: 1px solid white;
+	background-color: black;
+	height: 29vh;
+	/* width: auto; */
+	/*background-image: url("http://tozandelman.co.nz/wp-content/uploads/2013/04/background1.jpg"); margin: 0; padding: 0;*/
+	/*background-image:url("img/imag.png"); margin: 0; padding: 0;*/
+
+
+}
+
+
+ #author {
+	 padding:5px;
+  }
+
+
+
+  p {
+	 margin-left:2em;
+  }
+
+
+
+   h3 {
+	 margin-left: 2em;
+  }
+
+
+
+  ul {
+	 margin-right:1em;
+  }
+
+div.spacer
+{
+    font-size: 0;
+    height: 25px;
+    line-height: 0;
+}
+
+h2 {
+	margin-left: 1em;
+	margin-top: .5em;
+}
