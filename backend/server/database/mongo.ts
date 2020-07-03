@@ -7,5 +7,6 @@ const db = client.database("mylib");
 const users = db.collection("users");
 const moduleTemps = db.collection("moduleTemplates");
 const modules = db.collection("modules");
+const forms = db.collection("forms");
 //const activeKeys = db.collection("keys");
-export { users, modules, moduleTemps};
+export { users, modules, moduleTemps, forms};
