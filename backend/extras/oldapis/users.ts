@@ -243,5 +243,4 @@ const deleteDoctor = (
 };
 
 
-
 export { getPatients, getDoctors, getPatient, getDoctor, addPatient, addDoctor, updatePatient, updateDoctor, deletePatient, deleteDoctor };
