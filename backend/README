@@ -1,0 +1,29 @@
+Doctor:
+create account -> send invite to patient for acc 1 -> Doctor create From 2, assign to patient 3 -> Doctor looks at patient 5-> doc sees data 6-> look at individual module 7
+
+Patent:
+create account 1-> patient receives form 3 -> Patent fills form at own schedule 4 ->
+
+
+
+
+Server:
+
+Existing modules -> Form Module 2-> patient fills form 4 ->  Store data in MongoDB -> Retrieves data from MongoDB 5 -> returns dashboard data 6-> return graph of data or form information (individual module)7->
+
+
+
+
+Big Plan:
+
+Make server functionality, 
+Create frontend functionality, 
+link frontend and backend
+create working demo
+develop multiple modules
+test modules in mock scenarios
+ADD 2FA
+Make HIPAA compliant (ADD ENCRYPTION)
+
+make rollout Plan
+start selling beans

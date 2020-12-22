@@ -1,10 +1,10 @@
 import { MongoClient } from "https://deno.land/x/mongo@v0.8.0/mod.ts";
 
 const client = new MongoClient();
-client.connectWithUri("mongodb://localhost:27017");
+client.connectWithUri("mongodb://admin:SweetjeZus14472@localhost:27777/?authSource=admin&readPreference=primary&ssl=false");
 
 const usrdb = client.database("users");
-const users = usrdb.collection("users");
+const users = usrdb.collection("logicnerve_general");
 
 const modDB = client.database("modules");
 const moduleTemps = modDB.collection("templates");
